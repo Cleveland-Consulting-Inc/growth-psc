@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "template": "open Original_html/Wilson_Tennis_Camps_2027.html"
+    "template": "open src/public/templates/Wilson_Tennis_Camps_2027.html"
   },
   "dependencies": {
     "@vercel/postgres": "^0.10.0",
