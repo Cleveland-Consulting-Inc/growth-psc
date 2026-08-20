@@ -1,8 +1,66 @@
 import { readMultipartFormData } from 'h3'
+import { request as httpsRequest } from 'node:https'
+import { request as httpRequest } from 'node:http'
 
-const WEBDAV_HOST = 'https://premiersportscamps.com:2078'
+const WEBDAV_HOST = 'premiersportscamps.com'
 const WEBDAV_DOMAIN = 'growth.premiersportscamps.com'
 const PUBLIC_BASE = 'https://growth.premiersportscamps.com/coaches'
+
+function webdavPut(
+  host: string,
+  port: number,
+  path: string,
+  auth: string,
+  contentType: string,
+  body: Buffer,
+): Promise<{ status: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    const useHttps = port === 2078
+    const req = (useHttps ? httpsRequest : httpRequest)(
+      {
+        hostname: host,
+        port,
+        path,
+        method: 'PUT',
+        rejectUnauthorized: false, // cPanel often uses self-signed certs
+        headers: {
+          Authorization: `Basic ${auth}`,
+          'Content-Type': contentType,
+          'Content-Length': body.length,
+        },
+      },
+      (res) => {
+        let data = ''
+        res.on('data', (chunk) => { data += chunk })
+        res.on('end', () => resolve({ status: res.statusCode ?? 0, body: data }))
+      },
+    )
+    req.setTimeout(15000, () => { req.destroy(new Error('timeout')) })
+    req.on('error', reject)
+    req.write(body)
+    req.end()
+  })
+}
+
+function webdavMkcol(host: string, port: number, path: string, auth: string): Promise<void> {
+  return new Promise((resolve) => {
+    const useHttps = port === 2078
+    const req = (useHttps ? httpsRequest : httpRequest)(
+      {
+        hostname: host,
+        port,
+        path,
+        method: 'MKCOL',
+        rejectUnauthorized: false,
+        headers: { Authorization: `Basic ${auth}` },
+      },
+      () => resolve(),
+    )
+    req.setTimeout(10000, () => { req.destroy(); resolve() })
+    req.on('error', () => resolve())
+    req.end()
+  })
+}
 
 export default defineEventHandler(async (event) => {
   const parts = await readMultipartFormData(event)
@@ -17,38 +75,38 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, message: 'Upload not configured' })
   }
 
-  // cPanel WebDAV sub-accounts authenticate as username@domain
   const fullUsername = username.includes('@') ? username : `${username}@${WEBDAV_DOMAIN}`
   const auth = Buffer.from(`${fullUsername}:${password}`).toString('base64')
-  const headers = { Authorization: `Basic ${auth}` }
 
-  // Ensure the coaches directory exists (ignore errors — it may already exist)
-  await fetch(`${WEBDAV_HOST}/coaches/`, { method: 'MKCOL', headers }).catch(() => {})
+  // Try SSL port first, fall back to non-SSL
+  const ports = [2078, 2077]
+  let lastError = ''
 
-  const ext = (filePart.filename ?? 'photo').split('.').pop()?.toLowerCase() ?? 'jpg'
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+  for (const port of ports) {
+    try {
+      await webdavMkcol(WEBDAV_HOST, port, '/coaches/', auth)
 
-  let res: Response
-  try {
-    res = await fetch(`${WEBDAV_HOST}/coaches/${filename}`, {
-      method: 'PUT',
-      headers: {
-        ...headers,
-        'Content-Type': filePart.type ?? 'application/octet-stream',
-      },
-      body: filePart.data,
-    } as any)
-  } catch (err: any) {
-    throw createError({ statusCode: 502, message: `WebDAV connection failed: ${err?.message ?? err}` })
+      const ext = (filePart.filename ?? 'photo').split('.').pop()?.toLowerCase() ?? 'jpg'
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+      const result = await webdavPut(
+        WEBDAV_HOST,
+        port,
+        `/coaches/${filename}`,
+        auth,
+        filePart.type ?? 'application/octet-stream',
+        Buffer.from(filePart.data),
+      )
+
+      if (result.status >= 200 && result.status < 300) {
+        return { url: `${PUBLIC_BASE}/${filename}` }
+      }
+
+      lastError = `port ${port}: HTTP ${result.status} — ${result.body.slice(0, 200)}`
+    } catch (err: any) {
+      lastError = `port ${port}: ${err?.message ?? err}`
+    }
   }
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => '')
-    throw createError({
-      statusCode: 502,
-      message: `WebDAV upload failed (${res.status}): ${text.slice(0, 300)}`,
-    })
-  }
-
-  return { url: `${PUBLIC_BASE}/${filename}` }
+  throw createError({ statusCode: 502, message: `WebDAV failed: ${lastError}` })
 })
