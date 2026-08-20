@@ -13,10 +13,11 @@ export default defineEventHandler(async (event) => {
   }
 
   const storage = useStorage('assets:templates')
+  const keys = await storage.getKeys()
   const html = await storage.getItem<string>(filename)
 
   if (!html) {
-    throw createError({ statusCode: 404, message: 'Template file not found.' })
+    throw createError({ statusCode: 404, message: `Template file not found. Available keys: ${JSON.stringify(keys)}` })
   }
 
   setHeader(event, 'Content-Type', 'text/html; charset=utf-8')
