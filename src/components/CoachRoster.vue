@@ -54,16 +54,19 @@
             <input
               v-model="coach.photo_url"
               type="url"
-              placeholder="https://…"
+              placeholder="Paste image or URL…"
               class="flex-1 px-3 py-2 border border-zinc-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+              :class="{ 'border-blue-400 bg-blue-50': uploadingIndex === i }"
               @input="emit"
+              @paste="pastePhoto(i, $event)"
             />
             <label
-              class="cursor-pointer px-3 py-2 border border-zinc-200 rounded-md text-sm text-zinc-600 hover:bg-zinc-50 transition whitespace-nowrap flex items-center gap-1.5"
+              class="cursor-pointer px-3 py-2 border border-zinc-200 rounded-md text-sm text-zinc-600 hover:bg-zinc-50 transition whitespace-nowrap flex items-center"
               :class="{ 'opacity-50 pointer-events-none': uploadingIndex === i }"
+              title="Upload from file"
             >
               <span v-if="uploadingIndex === i">Uploading…</span>
-              <span v-else>Upload</span>
+              <span v-else>📁</span>
               <input
                 type="file"
                 accept="image/*"
@@ -74,6 +77,7 @@
             </label>
           </div>
           <p v-if="uploadError === i" class="text-xs text-red-500 mt-1">Upload failed — check connection and try again.</p>
+          <p class="text-xs text-zinc-400 mt-1">Paste an image or URL, or click 📁 to browse files.</p>
         </div>
       </div>
       <div v-if="coach.photo_url" class="flex items-center gap-3 pt-1">
@@ -141,14 +145,30 @@ function remove(i: number) {
   emit()
 }
 
+async function pastePhoto(i: number, event: ClipboardEvent) {
+  const imageItem = Array.from(event.clipboardData?.items ?? []).find(
+    item => item.kind === 'file' && item.type.startsWith('image/')
+  )
+  if (!imageItem) return // plain text URL paste — let it fall through normally
+  event.preventDefault()
+  const file = imageItem.getAsFile()
+  if (!file) return
+  await uploadFile(i, file)
+}
+
 async function uploadPhoto(i: number, event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (!file) return
+  await uploadFile(i, file)
+  ;(event.target as HTMLInputElement).value = ''
+}
+
+async function uploadFile(i: number, file: File) {
   uploadingIndex.value = i
   uploadError.value = null
   try {
     const form = new FormData()
-    form.append('file', file, file.name)
+    form.append('file', file, file.name || 'photo.jpg')
     const res = await $fetch<{ url: string }>('/api/admin/upload-photo', {
       method: 'POST',
       body: form,
@@ -159,7 +179,6 @@ async function uploadPhoto(i: number, event: Event) {
     uploadError.value = i
   } finally {
     uploadingIndex.value = null
-    ;(event.target as HTMLInputElement).value = ''
   }
 }
 </script>
