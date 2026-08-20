@@ -1,4 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
+import { resolve } from 'node:path'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',
@@ -26,5 +27,6 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'vercel',
+    serverAssets: [{ baseName: 'templates', dir: resolve(__dirname, 'src/server/templates') }],
   },
 })
