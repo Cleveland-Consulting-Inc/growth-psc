@@ -21,6 +21,17 @@ export default defineEventHandler(async (event) => {
 
   const content = sportDefaultContent(sport as SportSlug)
 
+  // Seed coaches from library if any exist for this sport
+  const { rows: libraryCoaches } = await sql`
+    SELECT name, position, university, photo_url
+    FROM coach_library
+    WHERE sport = ${sport}
+    ORDER BY created_at ASC
+  `
+  if (libraryCoaches.length > 0) {
+    content.network_coaches = libraryCoaches as any
+  }
+
   const { rows } = await sql`
     INSERT INTO proposals (slug, university_name, pin, status, sport, content)
     VALUES (${slug}, ${university_name}, ${pin}, 'live', ${sport}, ${JSON.stringify(content)}::jsonb)

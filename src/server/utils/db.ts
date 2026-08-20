@@ -31,4 +31,17 @@ export async function initDb() {
       timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS coach_library (
+      id SERIAL PRIMARY KEY,
+      sport TEXT NOT NULL,
+      name TEXT NOT NULL,
+      position TEXT NOT NULL DEFAULT '',
+      university TEXT NOT NULL DEFAULT '',
+      photo_url TEXT NOT NULL DEFAULT '',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE (sport, name)
+    )
+  `
 }

@@ -71,7 +71,22 @@
       </section>
 
       <section class="space-y-4">
-        <h3 class="text-xs font-semibold uppercase tracking-widest text-zinc-400">Coach Network</h3>
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-zinc-400">Coach Network</h3>
+          <div class="flex items-center gap-3">
+            <span v-if="pushResult" class="text-xs" :class="pushResult.error ? 'text-red-500' : 'text-emerald-600'">
+              {{ pushResult.error ?? `${pushResult.added} added, ${pushResult.skipped} already in library` }}
+            </span>
+            <button
+              type="button"
+              :disabled="pushing"
+              class="text-xs px-3 py-1.5 rounded-md border border-zinc-200 text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 transition"
+              @click="pushToLibrary"
+            >
+              {{ pushing ? 'Pushing…' : 'Push to Library' }}
+            </button>
+          </div>
+        </div>
         <Field label="Section Heading" v-model="content.network_heading" />
         <Field label="Section Body" v-model="content.network_body" textarea />
         <CoachRoster v-model="content.network_coaches" />
@@ -192,6 +207,8 @@ const content = reactive<Record<string, string>>({ ...(proposal.value?.content ?
 const saving = ref(false)
 const saved = ref(false)
 const saveError = ref('')
+const pushing = ref(false)
+const pushResult = ref<{ added?: number; skipped?: number; error?: string } | null>(null)
 
 async function saveContent() {
   saving.value = true
@@ -205,6 +222,30 @@ async function saveContent() {
     saveError.value = 'Save failed. Please try again.'
   } finally {
     saving.value = false
+  }
+}
+
+async function pushToLibrary() {
+  const coaches = content.network_coaches
+  if (!Array.isArray(coaches) || coaches.length === 0) {
+    pushResult.value = { error: 'No coaches to push.' }
+    setTimeout(() => { pushResult.value = null }, 3000)
+    return
+  }
+  pushing.value = true
+  pushResult.value = null
+  try {
+    const res = await $fetch<{ added: number; skipped: number }>('/api/admin/coach-library/push', {
+      method: 'POST',
+      body: { sport: proposal.value!.sport, coaches },
+    })
+    pushResult.value = res
+    setTimeout(() => { pushResult.value = null }, 4000)
+  } catch (err: any) {
+    pushResult.value = { error: err?.data?.message ?? 'Push failed.' }
+    setTimeout(() => { pushResult.value = null }, 4000)
+  } finally {
+    pushing.value = false
   }
 }
 
