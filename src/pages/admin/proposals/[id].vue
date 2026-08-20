@@ -8,7 +8,27 @@
         <p class="text-sm text-zinc-400 font-mono mt-1">/{{ proposal.slug }}/</p>
       </div>
       <div class="flex items-center gap-3 shrink-0">
-        <span class="text-sm text-zinc-500">PIN: <span class="font-mono font-medium text-zinc-400 tracking-widest">••••</span></span>
+        <form class="flex items-center gap-2" @submit.prevent="changePin">
+          <label class="text-sm text-zinc-500 shrink-0">PIN:</label>
+          <input
+            v-model="newPin"
+            type="text"
+            inputmode="numeric"
+            maxlength="4"
+            pattern="\d{4}"
+            placeholder="••••"
+            class="w-16 text-center font-mono px-2 py-1 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+          />
+          <button
+            type="submit"
+            :disabled="pinSaving || newPin.length !== 4"
+            class="text-xs px-3 py-1.5 rounded-md bg-zinc-900 text-white hover:bg-zinc-700 disabled:opacity-40 transition"
+          >
+            {{ pinSaving ? 'Saving…' : 'Set PIN' }}
+          </button>
+          <span v-if="pinSaved" class="text-xs text-emerald-600">Saved</span>
+          <span v-if="pinError" class="text-xs text-red-500">{{ pinError }}</span>
+        </form>
         <button
           class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition border"
           :class="proposal.status === 'live'
@@ -209,6 +229,10 @@ const saved = ref(false)
 const saveError = ref('')
 const pushing = ref(false)
 const pushResult = ref<{ added?: number; skipped?: number; error?: string } | null>(null)
+const newPin = ref('')
+const pinSaving = ref(false)
+const pinSaved = ref(false)
+const pinError = ref('')
 
 async function saveContent() {
   saving.value = true
@@ -246,6 +270,23 @@ async function pushToLibrary() {
     setTimeout(() => { pushResult.value = null }, 4000)
   } finally {
     pushing.value = false
+  }
+}
+
+async function changePin() {
+  if (!/^\d{4}$/.test(newPin.value)) return
+  pinSaving.value = true
+  pinSaved.value = false
+  pinError.value = ''
+  try {
+    await $fetch(`/api/admin/proposals/${id}`, { method: 'PUT', body: { pin: newPin.value } })
+    newPin.value = ''
+    pinSaved.value = true
+    setTimeout(() => { pinSaved.value = false }, 3000)
+  } catch {
+    pinError.value = 'Failed to update PIN.'
+  } finally {
+    pinSaving.value = false
   }
 }
 
