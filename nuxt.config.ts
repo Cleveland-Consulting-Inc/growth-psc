@@ -26,6 +26,6 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'vercel',
-    serverAssets: [{ baseName: 'templates', dir: './Original_html' }],
+    publicAssets: [{ dir: './Original_html', baseURL: '/templates' }],
   },
 })
