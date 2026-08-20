@@ -65,7 +65,9 @@ export function sportDefaultContent(sport: SportSlug) {
     about_stat_3_label: 'Camp locations',
     network_heading: 'Built to grow where you are.',
     network_body: `${s.brandName} partners with leading college coaches across the country. These are the coaches and programs helping shape the ${s.brandName} experience.`,
-    network_coaches: 'Coach Name, University\nCoach Name, University',
+    network_coaches: [
+      { name: 'Coach Name', position: 'Head Coach', university: 'University', photo_url: '' },
+    ],
     services: '01|Marketing|Strategic campaigns and targeted outreach designed to build awareness and drive enrollment.\n02|Coach Support|Easy-to-use portal for camp management and planning.\n03|Administration|Streamlined operations and communication from registration through camp completion.\n04|Registration|Easy-to-use online registration and secure payment processing for families.\n05|Customer Service|Support for camper families before, during and after registration.\n06|Brand|Access to the brand name and, depending on your package, equipment, prizes and giveaways.',
     package_1_name: 'Collegiate',
     package_1_subtitle: 'FULL-SERVICE PARTNERSHIP',

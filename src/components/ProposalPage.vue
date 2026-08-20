@@ -83,8 +83,21 @@
           <p>{{ c.network_body }}</p>
         </div>
         <div>
-          <div class="school-list">
-            <div v-for="coach in coaches" :key="coach">{{ coach }}</div>
+          <div class="coach-cards">
+            <div v-for="coach in coaches" :key="coach.name + coach.university" class="coach-card">
+              <div class="coach-photo">
+                <img
+                  v-if="coach.photo_url"
+                  :src="coach.photo_url"
+                  :alt="coach.name"
+                  @error="($event.target as HTMLImageElement).style.display = 'none'"
+                />
+                <div v-else class="coach-photo-placeholder"></div>
+              </div>
+              <p class="coach-name">{{ coach.name }}</p>
+              <p class="coach-position">{{ coach.position }}</p>
+              <p class="coach-university">{{ coach.university }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -195,9 +208,17 @@ const props = defineProps<{
 
 const c = computed(() => props.proposal.content ?? {})
 
-const coaches = computed(() =>
-  (c.value.network_coaches ?? '').split('\n').filter(Boolean)
-)
+const coaches = computed(() => {
+  const raw = c.value.network_coaches
+  if (Array.isArray(raw)) return raw
+  if (typeof raw === 'string' && raw.trim()) {
+    return raw.split('\n').filter(Boolean).map((line: string) => {
+      const [name, university] = line.split(',').map((s: string) => s.trim())
+      return { name: name ?? '', position: '', university: university ?? '', photo_url: '' }
+    })
+  }
+  return []
+})
 
 const services = computed(() =>
   (c.value.services ?? '').split('\n').filter(Boolean).map((line: string) => {
@@ -295,9 +316,14 @@ h3 { margin: 0 0 8px; font-size: 17px; }
 .network-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
 .camp-network h2 { font-size: clamp(48px, 5.5vw, 76px); margin-bottom: 20px; color: #fff; }
 .camp-network p:not(.eyebrow) { color: #aaa; max-width: 520px; }
-.school-list { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #333; }
-.school-list div { padding: 14px 0; border-bottom: 1px solid #333; font-size: 14px; font-weight: 700; }
-.school-list div:nth-child(odd) { padding-right: 16px; }
+.coach-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 28px; }
+.coach-card { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.coach-photo { width: 96px; height: 96px; border-radius: 50%; overflow: hidden; margin-bottom: 12px; background: #333; border: 2px solid var(--accent, #d7192f); }
+.coach-photo img { width: 100%; height: 100%; object-fit: cover; }
+.coach-photo-placeholder { width: 100%; height: 100%; background: #444; }
+.coach-name { font-size: 13px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 2px; }
+.coach-position { font-size: 11px; color: #aaa; margin: 0 0 2px; }
+.coach-university { font-size: 12px; color: #ccc; margin: 0; }
 
 /* SERVICES */
 .value { padding: 100px 0; }

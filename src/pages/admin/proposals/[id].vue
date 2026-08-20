@@ -74,12 +74,7 @@
         <h3 class="text-xs font-semibold uppercase tracking-widest text-zinc-400">Coach Network</h3>
         <Field label="Section Heading" v-model="content.network_heading" />
         <Field label="Section Body" v-model="content.network_body" textarea />
-        <Field
-          label="Coaches (one per line: Name, School)"
-          v-model="content.network_coaches"
-          textarea
-          :rows="8"
-        />
+        <CoachRoster v-model="content.network_coaches" />
       </section>
 
       <section class="space-y-4">
