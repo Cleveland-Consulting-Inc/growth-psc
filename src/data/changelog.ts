@@ -6,6 +6,18 @@ export interface Release {
 
 export const changelog: Release[] = [
   {
+    version: 'v1.3',
+    date: 'August 2026',
+    features: [
+      'Security hardening: PIN attempts are now rate-limited to 10 tries per 15 minutes per IP — brute-force access to proposals is blocked at the server.',
+      'Admin login is rate-limited to 5 attempts per 15 minutes per IP to prevent password guessing attacks.',
+      'PINs are now stored as secure hashes — the original digits are never saved in the database, protecting proposals even if the database were compromised.',
+      'Proposal content is gated server-side: the full pitch deck is no longer accessible via the API without a valid PIN session, closing a bypass that existed in earlier versions.',
+      'PIN reset: admins can now set a new PIN for any proposal directly from the proposal edit page without recreating the proposal.',
+      'Proposal pages no longer reveal whether a URL slug exists to unauthenticated callers — failed access attempts return a uniform response.',
+    ],
+  },
+  {
     version: 'v1.2',
     date: 'August 2026',
     features: [
