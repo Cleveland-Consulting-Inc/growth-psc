@@ -76,7 +76,7 @@
               />
             </label>
           </div>
-          <p v-if="uploadError === i" class="text-xs text-red-500 mt-1">Upload failed — check connection and try again.</p>
+          <p v-if="uploadError === i" class="text-xs text-red-500 mt-1">Upload failed: {{ uploadErrorMsg || 'check connection and try again.' }}</p>
           <p class="text-xs text-zinc-400 mt-1">Paste an image or URL, or click 📁 to browse files.</p>
         </div>
       </div>
@@ -118,6 +118,7 @@ const emits = defineEmits(['update:modelValue'])
 const coaches = ref<Coach[]>(parseValue(props.modelValue))
 const uploadingIndex = ref<number | null>(null)
 const uploadError = ref<number | null>(null)
+const uploadErrorMsg = ref<string>('')
 
 function parseValue(val: Coach[] | string): Coach[] {
   if (Array.isArray(val)) return val.map(c => ({ name: '', position: '', university: '', photo_url: '', ...c }))
@@ -175,8 +176,9 @@ async function uploadFile(i: number, file: File) {
     })
     coaches.value[i].photo_url = res.url
     emit()
-  } catch {
+  } catch (err: any) {
     uploadError.value = i
+    uploadErrorMsg.value = err?.data?.message ?? err?.message ?? ''
   } finally {
     uploadingIndex.value = null
   }
