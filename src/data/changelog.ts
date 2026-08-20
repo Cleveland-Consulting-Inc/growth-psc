@@ -6,6 +6,17 @@ export interface Release {
 
 export const changelog: Release[] = [
   {
+    version: 'v1.4',
+    date: 'August 2026',
+    features: [
+      'Sport Templates section added to the admin dashboard — each sport shows its logo, brand name, and a Preview button that opens the current HTML template in a new tab.',
+      'Template preview is served live from disk, so any edits to the source HTML are reflected immediately without a redeploy.',
+      'Sports without a template yet show a disabled placeholder; enabling a new sport requires one line in the server route.',
+      'Wilson Tennis Camps template updated: Our Approach section expanded to three cards (You work for yourself / You work for the model / We work for you) and repositioned above the packages section.',
+      'Classic package card restyled to match the dark section theme; package order updated to Classic first, Collegiate second.',
+    ],
+  },
+  {
     version: 'v1.3',
     date: 'August 2026',
     features: [

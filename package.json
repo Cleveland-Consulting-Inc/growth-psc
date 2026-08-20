@@ -9,7 +9,8 @@
     "preview": "nuxt preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "template": "open Original_html/Wilson_Tennis_Camps_2027.html"
   },
   "dependencies": {
     "@vercel/postgres": "^0.10.0",

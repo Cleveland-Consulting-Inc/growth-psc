@@ -58,6 +58,40 @@
         </tbody>
       </table>
     </div>
+    <!-- Templates -->
+    <div class="mt-16">
+      <h2 class="text-base font-semibold text-zinc-900 mb-6">Sport Templates</h2>
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div
+          v-for="sport in sports"
+          :key="sport.slug"
+          class="bg-white border border-zinc-200 rounded-lg p-4 flex flex-col gap-3"
+        >
+          <div class="flex items-center gap-2.5">
+            <img :src="sport.logoPath" :alt="sport.brandName" class="h-6 w-auto object-contain" />
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-zinc-900">{{ sport.label }}</p>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ sport.brandName }}</p>
+          </div>
+          <a
+            v-if="sport.hasTemplate"
+            :href="`/api/admin/templates/${sport.slug}`"
+            target="_blank"
+            class="mt-auto text-xs font-medium px-3 py-1.5 rounded-md bg-zinc-900 text-white text-center hover:bg-zinc-700 transition"
+          >
+            Preview
+          </a>
+          <span
+            v-else
+            class="mt-auto text-xs font-medium px-3 py-1.5 rounded-md bg-zinc-100 text-zinc-400 text-center cursor-not-allowed"
+          >
+            No template yet
+          </span>
+        </div>
+      </div>
+    </div>
+
     <!-- Changelog -->
     <div class="mt-16">
       <h2 class="text-base font-semibold text-zinc-900 mb-6">Changelog</h2>
@@ -85,8 +119,16 @@
 
 <script setup lang="ts">
 import { changelog } from '~/data/changelog'
+import { SPORTS } from '~/server/utils/sports'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
+
+const TEMPLATES_AVAILABLE = new Set(['tennis'])
+
+const sports = Object.values(SPORTS).map(s => ({
+  ...s,
+  hasTemplate: TEMPLATES_AVAILABLE.has(s.slug),
+}))
 
 const { data: proposals, pending, refresh } = await useFetch('/api/admin/proposals')
 
