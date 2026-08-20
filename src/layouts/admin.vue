@@ -9,6 +9,7 @@
     <main class="max-w-5xl mx-auto px-6 py-10">
       <slot />
     </main>
+    <footer class="text-center py-4 text-xs text-zinc-300 select-none">v1.2</footer>
   </div>
 </template>
 
