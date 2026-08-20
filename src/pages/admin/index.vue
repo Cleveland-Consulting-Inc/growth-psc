@@ -21,6 +21,7 @@
         <thead class="border-b border-zinc-200 bg-zinc-50">
           <tr>
             <th class="text-left px-5 py-3 font-medium text-zinc-500">University</th>
+            <th class="text-left px-5 py-3 font-medium text-zinc-500">Sport</th>
             <th class="text-left px-5 py-3 font-medium text-zinc-500">URL</th>
             <th class="text-left px-5 py-3 font-medium text-zinc-500">PIN</th>
             <th class="text-left px-5 py-3 font-medium text-zinc-500">Status</th>
@@ -31,6 +32,7 @@
         <tbody class="divide-y divide-zinc-100">
           <tr v-for="p in proposals" :key="p.id">
             <td class="px-5 py-3 font-medium text-zinc-900">{{ p.university_name }}</td>
+            <td class="px-5 py-3 text-zinc-500 text-xs capitalize">{{ p.sport }}</td>
             <td class="px-5 py-3 text-zinc-500 font-mono text-xs">/{{ p.slug }}/</td>
             <td class="px-5 py-3 font-mono text-zinc-700">{{ p.pin }}</td>
             <td class="px-5 py-3">

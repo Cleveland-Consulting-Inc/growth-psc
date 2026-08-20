@@ -4,6 +4,21 @@
 
     <form class="bg-white border border-zinc-200 rounded-lg p-8 space-y-6" @submit.prevent="submit">
       <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Sport</label>
+        <select
+          v-model="form.sport"
+          class="w-full px-3 py-2 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 bg-white"
+          required
+        >
+          <option value="">Select a sport…</option>
+          <option value="tennis">Tennis — Wilson Tennis Camps</option>
+          <option value="lacrosse">Lacrosse — US Lacrosse Camps</option>
+          <option value="volleyball">Volleyball — US Volleyball Camps</option>
+          <option value="soccer">Soccer — Elite 11 Soccer Camps</option>
+        </select>
+      </div>
+
+      <div>
         <label class="block text-sm font-medium text-zinc-700 mb-1.5">University Name</label>
         <input
           v-model="form.university_name"
@@ -66,7 +81,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
-const form = reactive({ university_name: '', slug: '', pin: '' })
+const form = reactive({ sport: '', university_name: '', slug: '', pin: '' })
 const error = ref('')
 const loading = ref(false)
 
