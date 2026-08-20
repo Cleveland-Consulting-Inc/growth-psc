@@ -1,0 +1,42 @@
+export interface Release {
+  version: string
+  date: string
+  features: string[]
+}
+
+export const changelog: Release[] = [
+  {
+    version: 'v1.2',
+    date: 'August 2026',
+    features: [
+      'Coach roster: each proposal now supports a structured list of coaches with name, position, university, and photo — replacing the previous plain-text field.',
+      'Coach photos can be added by uploading a file directly from your computer or by pasting a copied image into the photo field — images are stored on the Premier Sports Camps server and linked automatically.',
+      'Coach library: coaches added to any proposal can be pushed to a shared library with one click. New proposals for the same sport are pre-populated with library coaches, so you\'re not starting from scratch each time.',
+      'Push to Library button in the Coach Network section deduplicates by name, so re-pushing an updated roster won\'t create duplicates.',
+    ],
+  },
+  {
+    version: 'v1.1',
+    date: 'August 2026',
+    features: [
+      'Public proposal pages: coaches can visit a branded pitch deck at a unique URL with a 4-digit PIN — no account required.',
+      'Sport-specific branding: proposals support four sports (Wilson Tennis Camps, US Lacrosse Camps, US Volleyball Camps, Elite 11 Soccer Camps), each with its own logo and accent color.',
+      'PIN gate: coaches enter a PIN before viewing a proposal; sessions persist for 8 hours so they don\'t have to re-enter on the same device.',
+      'Access logging: every PIN attempt — correct or incorrect — is recorded with timestamp, IP address, and browser, visible in the admin per-proposal log.',
+      'Offline toggle: proposals can be taken offline instantly from the dashboard; coaches see a branded unavailable message rather than the content.',
+      'Multi-sport proposal creation: new proposals are created for a specific sport and pre-populated with appropriate default content and branding.',
+    ],
+  },
+  {
+    version: 'v1.0',
+    date: 'August 2026',
+    features: [
+      'Admin login with a secure session that persists for 30 days — no username required, password-only access.',
+      'Proposal dashboard: view all proposals at a glance with sport, URL slug, PIN, live/offline status, and total view count.',
+      'Create proposals: generate a new branded proposal for any sport with a university name, custom URL slug, and 4-digit PIN.',
+      'Content editor: every section of the pitch deck — hero, about, coach network, services, packages, contact — is editable per proposal through a structured form.',
+      'Live/offline toggle: proposals can be switched on or off instantly from both the dashboard and the proposal editor.',
+      'Deployed to growth.premiersportscamps.com with automatic SSL and Vercel serverless infrastructure.',
+    ],
+  },
+]

@@ -57,10 +57,34 @@
         </tbody>
       </table>
     </div>
+    <!-- Changelog -->
+    <div class="mt-16">
+      <h2 class="text-base font-semibold text-zinc-900 mb-6">Changelog</h2>
+      <div class="space-y-8">
+        <div v-for="release in changelog" :key="release.version">
+          <div class="flex items-baseline gap-3 mb-3">
+            <span class="text-sm font-semibold text-zinc-900">{{ release.version }}</span>
+            <span class="text-xs text-zinc-400">{{ release.date }}</span>
+          </div>
+          <ul class="space-y-2">
+            <li
+              v-for="(feature, i) in release.features"
+              :key="i"
+              class="flex gap-3 text-sm text-zinc-600"
+            >
+              <span class="mt-1.5 w-1 h-1 rounded-full bg-zinc-300 shrink-0"></span>
+              {{ feature }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { changelog } from '~/data/changelog'
+
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const { data: proposals, pending, refresh } = await useFetch('/api/admin/proposals')
