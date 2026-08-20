@@ -4,7 +4,7 @@ import { sql } from '../../utils/db'
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
   const { rows } = await sql`
-    SELECT id, slug, university_name, sport, status, content, created_at
+    SELECT id, slug, university_name, sport, status, created_at
     FROM proposals WHERE slug = ${slug}
   `
   const proposal = rows[0]

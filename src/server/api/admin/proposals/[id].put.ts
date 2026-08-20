@@ -1,4 +1,5 @@
 import { getRouterParam, readBody, createError } from 'h3'
+import bcrypt from 'bcryptjs'
 import { sql } from '../../../utils/db'
 
 export default defineEventHandler(async (event) => {
@@ -12,11 +13,14 @@ export default defineEventHandler(async (event) => {
   const p = existing[0]
   const newContent = body.content !== undefined ? JSON.stringify(body.content) : JSON.stringify(p.content)
   const newStatus = body.status ?? p.status
-  const newPin = body.pin ?? p.pin
   const newName = body.university_name ?? p.university_name
 
-  if (newPin && !/^\d{4}$/.test(newPin)) {
-    throw createError({ statusCode: 400, message: 'PIN must be exactly 4 digits' })
+  let newPin = p.pin
+  if (body.pin !== undefined) {
+    if (!/^\d{4}$/.test(body.pin)) {
+      throw createError({ statusCode: 400, message: 'PIN must be exactly 4 digits' })
+    }
+    newPin = await bcrypt.hash(body.pin, 12)
   }
 
   const { rows } = await sql`

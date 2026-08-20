@@ -8,7 +8,7 @@
         <p class="text-sm text-zinc-400 font-mono mt-1">/{{ proposal.slug }}/</p>
       </div>
       <div class="flex items-center gap-3 shrink-0">
-        <span class="text-sm text-zinc-500">PIN: <span class="font-mono font-medium text-zinc-900">{{ proposal.pin }}</span></span>
+        <span class="text-sm text-zinc-500">PIN: <span class="font-mono font-medium text-zinc-400 tracking-widest">••••</span></span>
         <button
           class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition border"
           :class="proposal.status === 'live'

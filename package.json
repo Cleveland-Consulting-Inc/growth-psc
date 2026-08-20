@@ -6,15 +6,24 @@
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "nuxt": "^3.17.0",
-    "@vercel/postgres": "^0.10.0"
+    "@vercel/postgres": "^0.10.0",
+    "bcryptjs": "^3.0.3",
+    "nuxt": "^3.17.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.1.0",
-    "tailwindcss": "^4.1.0"
+    "@types/bcryptjs": "^2.4.6",
+    "@vitest/coverage-v8": "^4.1.11",
+    "playwright": "^1.62.1",
+    "tailwindcss": "^4.1.0",
+    "vitest": "^4.1.11"
   },
   "allowScripts": {
     "esbuild@0.28.2": true,

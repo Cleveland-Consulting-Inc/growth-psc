@@ -1,4 +1,5 @@
 import { readBody, createError } from 'h3'
+import bcrypt from 'bcryptjs'
 import { sql } from '../../../utils/db'
 import { sportDefaultContent, SPORTS } from '../../../utils/sports'
 import type { SportSlug } from '../../../utils/sports'
@@ -19,6 +20,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Invalid sport' })
   }
 
+  const hashedPin = await bcrypt.hash(pin, 12)
   const content = sportDefaultContent(sport as SportSlug)
 
   // Seed coaches from library if any exist for this sport
@@ -34,7 +36,7 @@ export default defineEventHandler(async (event) => {
 
   const { rows } = await sql`
     INSERT INTO proposals (slug, university_name, pin, status, sport, content)
-    VALUES (${slug}, ${university_name}, ${pin}, 'live', ${sport}, ${JSON.stringify(content)}::jsonb)
+    VALUES (${slug}, ${university_name}, ${hashedPin}, 'live', ${sport}, ${JSON.stringify(content)}::jsonb)
     RETURNING *
   `
   return rows[0]

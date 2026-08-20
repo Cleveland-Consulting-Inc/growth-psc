@@ -38,7 +38,7 @@
   </div>
 
   <!-- Proposal content -->
-  <ProposalPage v-else-if="proposal && sport" :proposal="proposal" :sport="sport" />
+  <ProposalPage v-else-if="proposal && sport && content" :proposal="{ ...proposal, content }" :sport="sport" />
 </template>
 
 <script setup lang="ts">
@@ -55,16 +55,22 @@ const sport = computed(() => {
   return SPORTS[proposal.value.sport as SportSlug] ?? null
 })
 
-// Check if session cookie already grants access (set after successful PIN)
 const cookie = useCookie(`proposal-${slug}`)
 const unlocked = ref(cookie.value === 'granted')
+
+// Fetch full content only once the session cookie is present
+const content = ref<Record<string, any> | null>(null)
+if (unlocked.value) {
+  const { data } = await useFetch(`/api/proposals/${slug}/content`)
+  content.value = data.value as Record<string, any>
+}
 
 const pin = ref('')
 const pinError = ref('')
 const verifying = ref(false)
 
 useHead(() => ({
-  title: proposal.value?.content?.page_title ?? proposal.value?.university_name ?? 'Proposal',
+  title: proposal.value?.university_name ?? 'Proposal',
 }))
 
 async function verify() {
@@ -78,15 +84,20 @@ async function verify() {
     }) as any
     if (res.ok) {
       cookie.value = 'granted'
+      // Fetch content now that the server has set the session cookie
+      const { data } = await useFetch(`/api/proposals/${slug}/content`)
+      content.value = data.value as Record<string, any>
       unlocked.value = true
-    } else if (res.reason === 'offline') {
-      proposal.value!.status = 'offline'
     } else {
       pinError.value = 'Incorrect PIN. Please try again.'
       pin.value = ''
     }
-  } catch {
-    pinError.value = 'Something went wrong. Please try again.'
+  } catch (err: any) {
+    if (err?.status === 429) {
+      pinError.value = err?.data?.message ?? 'Too many attempts — try again in 15 minutes.'
+    } else {
+      pinError.value = 'Something went wrong. Please try again.'
+    }
   } finally {
     verifying.value = false
   }

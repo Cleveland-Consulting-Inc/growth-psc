@@ -24,6 +24,7 @@
             <th class="text-left px-5 py-3 font-medium text-zinc-500">Sport</th>
             <th class="text-left px-5 py-3 font-medium text-zinc-500">URL</th>
             <th class="text-left px-5 py-3 font-medium text-zinc-500">PIN</th>
+            <!-- PINs are stored as hashes and cannot be displayed -->
             <th class="text-left px-5 py-3 font-medium text-zinc-500">Status</th>
             <th class="text-left px-5 py-3 font-medium text-zinc-500">Views</th>
             <th class="px-5 py-3"></th>
@@ -34,7 +35,7 @@
             <td class="px-5 py-3 font-medium text-zinc-900">{{ p.university_name }}</td>
             <td class="px-5 py-3 text-zinc-500 text-xs capitalize">{{ p.sport }}</td>
             <td class="px-5 py-3 text-zinc-500 font-mono text-xs">/{{ p.slug }}/</td>
-            <td class="px-5 py-3 font-mono text-zinc-700">{{ p.pin }}</td>
+            <td class="px-5 py-3 font-mono text-zinc-400 tracking-widest">••••</td>
             <td class="px-5 py-3">
               <button
                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition"
