@@ -1,5 +1,3 @@
-import { readFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
 import type { SportSlug } from '~/server/utils/sports'
 
 const TEMPLATE_FILES: Partial<Record<SportSlug, string>> = {
@@ -14,13 +12,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'No template for this sport yet.' })
   }
 
-  const filePath = resolve(process.cwd(), 'Original_html', filename)
+  const storage = useStorage('assets:templates')
+  const html = await storage.getItem<string>(filename)
 
-  try {
-    const html = await readFile(filePath, 'utf-8')
-    setHeader(event, 'Content-Type', 'text/html; charset=utf-8')
-    return html
-  } catch {
+  if (!html) {
     throw createError({ statusCode: 404, message: 'Template file not found.' })
   }
+
+  setHeader(event, 'Content-Type', 'text/html; charset=utf-8')
+  return html
 })
