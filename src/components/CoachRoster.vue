@@ -49,14 +49,31 @@
           />
         </div>
         <div>
-          <label class="block text-xs font-medium text-zinc-600 mb-1">Photo URL</label>
-          <input
-            v-model="coach.photo_url"
-            type="url"
-            placeholder="https://premiersportscamps.com/coaches/john-smith.jpg"
-            class="w-full px-3 py-2 border border-zinc-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
-            @input="emit"
-          />
+          <label class="block text-xs font-medium text-zinc-600 mb-1">Photo</label>
+          <div class="flex gap-2">
+            <input
+              v-model="coach.photo_url"
+              type="url"
+              placeholder="https://…"
+              class="flex-1 px-3 py-2 border border-zinc-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+              @input="emit"
+            />
+            <label
+              class="cursor-pointer px-3 py-2 border border-zinc-200 rounded-md text-sm text-zinc-600 hover:bg-zinc-50 transition whitespace-nowrap flex items-center gap-1.5"
+              :class="{ 'opacity-50 pointer-events-none': uploadingIndex === i }"
+            >
+              <span v-if="uploadingIndex === i">Uploading…</span>
+              <span v-else>Upload</span>
+              <input
+                type="file"
+                accept="image/*"
+                class="hidden"
+                :disabled="uploadingIndex === i"
+                @change="uploadPhoto(i, $event)"
+              />
+            </label>
+          </div>
+          <p v-if="uploadError === i" class="text-xs text-red-500 mt-1">Upload failed — check connection and try again.</p>
         </div>
       </div>
       <div v-if="coach.photo_url" class="flex items-center gap-3 pt-1">
@@ -95,6 +112,8 @@ const props = defineProps<{
 const emits = defineEmits(['update:modelValue'])
 
 const coaches = ref<Coach[]>(parseValue(props.modelValue))
+const uploadingIndex = ref<number | null>(null)
+const uploadError = ref<number | null>(null)
 
 function parseValue(val: Coach[] | string): Coach[] {
   if (Array.isArray(val)) return val.map(c => ({ name: '', position: '', university: '', photo_url: '', ...c }))
@@ -120,5 +139,27 @@ function add() {
 function remove(i: number) {
   coaches.value.splice(i, 1)
   emit()
+}
+
+async function uploadPhoto(i: number, event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  uploadingIndex.value = i
+  uploadError.value = null
+  try {
+    const form = new FormData()
+    form.append('file', file, file.name)
+    const res = await $fetch<{ url: string }>('/api/admin/upload-photo', {
+      method: 'POST',
+      body: form,
+    })
+    coaches.value[i].photo_url = res.url
+    emit()
+  } catch {
+    uploadError.value = i
+  } finally {
+    uploadingIndex.value = null
+    ;(event.target as HTMLInputElement).value = ''
+  }
 }
 </script>
