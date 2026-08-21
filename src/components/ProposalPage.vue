@@ -307,16 +307,17 @@ const pkg2Features = computed(() =>
 /* NAV */
 .site-header {
   position: sticky; top: 0; z-index: 50; height: 76px;
-  background: rgba(8,8,8,.96); backdrop-filter: blur(14px);
+  background: #fff;
   display: flex; align-items: center; padding: 0 4vw;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid var(--line);
 }
 .site-header .container { display: flex; align-items: center; width: 100%; }
 .brand-logo { height: 36px; object-fit: contain; }
 .site-nav { display: flex; gap: 24px; margin-left: auto; align-items: center; }
-.site-nav a { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: #ddd; text-decoration: none; }
-.site-nav a:hover { color: #fff; }
-.nav-cta { background: var(--accent); padding: 10px 16px; border-radius: 99px; font-weight: 800; }
+.site-nav a { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--ink); text-decoration: none; }
+.site-nav a:hover { color: var(--accent); }
+.nav-cta { background: var(--accent); color: #fff !important; padding: 10px 16px; border-radius: 99px; font-weight: 800; }
+.nav-cta:hover { opacity: .88; }
 .nav-cta span { margin-left: 6px; }
 
 /* HERO */
@@ -421,10 +422,10 @@ h3 { margin: 0 0 8px; font-size: 17px; }
 .contact-card span { font-size: 14px; color: #aaa; }
 
 /* FOOTER */
-.site-footer { background: #050505; padding: 32px 0; border-top: 1px solid #1a1a1a; }
+.site-footer { background: #fff; padding: 32px 0; border-top: 1px solid var(--line); }
 .footer-inner { display: flex; align-items: center; gap: 24px; }
-.footer-logo { height: 28px; object-fit: contain; opacity: .7; }
-.site-footer p { font-size: 12px; color: #555; margin: 0; }
+.footer-logo { height: 28px; object-fit: contain; }
+.site-footer p { font-size: 12px; color: var(--muted); margin: 0; }
 
 /* HERO STATS ROW */
 .hero-stats-row { display: flex; align-items: center; gap: 28px; margin-top: 36px; flex-wrap: wrap; }
