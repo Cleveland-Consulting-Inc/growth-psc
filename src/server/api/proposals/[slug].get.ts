@@ -2,6 +2,7 @@ import { getRouterParam, createError } from 'h3'
 import { sql } from '../../utils/db'
 
 export default defineEventHandler(async (event) => {
+  setResponseHeader(event, 'Cache-Control', 'no-store')
   const slug = getRouterParam(event, 'slug')
   const { rows } = await sql`
     SELECT id, slug, university_name, sport, status, created_at

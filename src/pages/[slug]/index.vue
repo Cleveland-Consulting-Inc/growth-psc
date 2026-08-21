@@ -1,6 +1,6 @@
 <template>
   <!-- Offline -->
-  <div v-if="proposal?.status === 'offline'" class="min-h-screen flex items-center justify-center bg-zinc-950">
+  <div v-if="isOffline" class="min-h-screen flex items-center justify-center bg-zinc-950">
     <div class="text-center px-6">
       <img v-if="sport" :src="sport.logoPath" :alt="sport.brandName" class="h-12 mx-auto mb-8 object-contain" />
       <p class="text-zinc-400 text-lg">This proposal is not currently available.</p>
@@ -48,7 +48,10 @@ import type { SportSlug } from '~/server/utils/sports'
 const route = useRoute()
 const slug = route.params.slug as string
 
-const { data: proposal } = await useFetch(`/api/proposals/${slug}`)
+const { data: proposal } = await useFetch(`/api/proposals/${slug}`, {
+  // Always fetch fresh — never serve a cached status from a previous page visit
+  getCachedData: () => null,
+})
 
 const sport = computed(() => {
   if (!proposal.value?.sport) return null
@@ -60,9 +63,16 @@ const unlocked = ref(cookie.value === 'granted')
 
 // Fetch full content only once the session cookie is present
 const content = ref<Record<string, any> | null>(null)
-if (unlocked.value) {
-  const { data } = await useFetch(`/api/proposals/${slug}/content`)
-  content.value = data.value as Record<string, any>
+const isOffline = ref(proposal.value?.status === 'offline')
+
+if (unlocked.value && !isOffline.value) {
+  try {
+    const data = await $fetch<Record<string, any>>(`/api/proposals/${slug}/content`)
+    content.value = data
+  } catch {
+    // Content unavailable — proposal is offline or session expired
+    isOffline.value = true
+  }
 }
 
 const pin = ref('')
@@ -83,11 +93,12 @@ async function verify() {
       body: { pin: pin.value },
     }) as any
     if (res.ok) {
-      cookie.value = 'granted'
-      // Fetch content now that the server has set the session cookie
-      const { data } = await useFetch(`/api/proposals/${slug}/content`)
-      content.value = data.value as Record<string, any>
-      unlocked.value = true
+      try {
+        content.value = await $fetch<Record<string, any>>(`/api/proposals/${slug}/content`)
+        unlocked.value = true
+      } catch {
+        isOffline.value = true
+      }
     } else {
       pinError.value = 'Incorrect PIN. Please try again.'
       pin.value = ''
