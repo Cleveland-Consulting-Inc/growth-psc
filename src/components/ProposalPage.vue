@@ -29,12 +29,24 @@
           <a href="#fees" class="button button-accent">Explore the packages</a>
           <a href="#contact" class="text-link">Start a conversation <span>→</span></a>
         </div>
-      </div>
-      <div class="hero-stat">
-        <strong>{{ c.hero_stat_number }}</strong>
-        <span>{{ c.hero_stat_label }}</span>
+        <div class="hero-stats-row">
+          <div class="hero-stat-item"><strong>30+</strong><span>Years of Camp<br>Experience</span></div>
+          <span class="hero-stat-divider">|</span>
+          <div class="hero-stat-item"><strong>40K+</strong><span>Campers<br>Served</span></div>
+          <span class="hero-stat-divider">|</span>
+          <div class="hero-stat-item"><strong>30+</strong><span>Camp<br>Locations</span></div>
+        </div>
       </div>
     </section>
+
+    <!-- MARQUEE BANNER -->
+    <div class="marquee-banner">
+      <span>More Campers.</span>
+      <span class="banner-divider">|</span>
+      <span>Less Work.</span>
+      <span class="banner-divider">|</span>
+      <span>Your Camp.</span>
+    </div>
 
     <!-- ABOUT -->
     <section id="about" class="section-light two-col">
@@ -125,34 +137,72 @@
       <img src="/images/sports/tennis/split.jpg" alt="" />
     </div>
 
-    <!-- PACKAGES -->
-    <section id="fees" class="section-light fees">
+    <!-- OUR APPROACH -->
+    <section class="section-light approach-section">
       <div class="container">
         <div class="section-heading centered">
+          <p class="eyebrow red">Our Approach</p>
+          <h2>Your camp.<br><span class="h2-muted">Your decisions.</span></h2>
+          <p>We believe the best camp partnerships are built around the coach and the program — not around a one-size-fits-all model.</p>
+        </div>
+        <div class="approach-grid">
+          <div class="approach-card approach-solo">
+            <p class="approach-kicker">Going It Alone</p>
+            <h3>You work by yourself.</h3>
+            <div class="approach-row"><span class="approach-icon muted">✗</span><p><b>You market your own camp.</b><br>Outreach, paid ads, and enrollment are entirely on you — no brand, no network, no support.</p></div>
+            <div class="approach-row"><span class="approach-icon muted">✗</span><p><b>You build and manage registration.</b><br>Source, set up, and maintain your own registration system for every family that signs up.</p></div>
+            <div class="approach-row"><span class="approach-icon muted">✗</span><p><b>You source your own insurance.</b><br>Locate, negotiate, and carry your own liability coverage and handle all compliance requirements.</p></div>
+            <div class="approach-row"><span class="approach-icon muted">✗</span><p><b>You field every customer call.</b><br>All parent inquiries and family support land directly on you and your staff.</p></div>
+          </div>
+          <div class="approach-card approach-other">
+            <p class="approach-kicker">One-Size-Fits-All Models</p>
+            <h3>You work for the model.</h3>
+            <div class="approach-row"><span class="approach-icon muted">×</span><p><b>Location is dictated.</b><br>Camp operations may be built around the provider's model rather than your program.</p></div>
+            <div class="approach-row"><span class="approach-icon muted">×</span><p><b>Dates are dictated.</b><br>Schedules may be determined by a larger system or regional calendar.</p></div>
+            <div class="approach-row"><span class="approach-icon muted">×</span><p><b>Pricing is dictated.</b><br>Less flexibility to shape the camp around your market and goals.</p></div>
+            <div class="approach-row"><span class="approach-icon muted">×</span><p><b>Less flexibility.</b><br>A standardized structure can make it harder to tailor the partnership to your needs.</p></div>
+          </div>
+          <div class="approach-card approach-wilson">
+            <p class="approach-kicker">{{ sport.brandName }}</p>
+            <h3>We work for you.</h3>
+            <div class="approach-row"><span class="approach-icon accent">✓</span><p><b>You choose the location.</b><br>Build the camp around the courts and facilities that work for your program.</p></div>
+            <div class="approach-row"><span class="approach-icon accent">✓</span><p><b>You choose the dates.</b><br>Set your schedule around your team's calendar and your university's needs.</p></div>
+            <div class="approach-row"><span class="approach-icon accent">✓</span><p><b>You shape the camp.</b><br>Keep ownership of the experience, coaching vision and program decisions.</p></div>
+            <div class="approach-row"><span class="approach-icon accent">✓</span><p><b>You choose the package.</b><br>Take the level of marketing and support that makes sense for your camp.</p></div>
+            <div class="approach-row"><span class="approach-icon accent">✓</span><p><b>You set the pricing.</b><br>Price your camp for your market — no mandated fee structures or rate cards imposed from above.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PACKAGES -->
+    <section id="fees" class="section-dark fees">
+      <div class="container">
+        <div class="section-heading centered light-heading">
           <p class="eyebrow">2027 Camp Packages</p>
           <h2>Choose the support that fits your camp.</h2>
           <p>Two partnership levels give you the flexibility to decide how much marketing, product and administrative support you want.</p>
         </div>
         <div class="packages-grid">
+          <div class="package-card package-classic">
+            <p class="pkg-subtitle">{{ c.package_2_subtitle }}</p>
+            <h3>{{ c.package_2_name }}</h3>
+            <div class="pkg-rate"><strong>80%</strong><span>of camp revenue stays with you</span></div>
+            <p class="pkg-tagline">{{ c.package_2_tagline }}</p>
+            <ul>
+              <li v-for="feat in pkg2Features" :key="feat">{{ feat }}</li>
+            </ul>
+            <a href="#contact" class="button button-light pkg-cta">Talk about {{ c.package_2_name }}</a>
+          </div>
           <div class="package-card package-primary">
             <p class="pkg-subtitle">{{ c.package_1_subtitle }}</p>
             <h3>{{ c.package_1_name }}</h3>
-            <p class="pkg-percent">{{ c.package_1_percent }}</p>
+            <div class="pkg-rate"><strong>75%</strong><span>of camp revenue stays with you</span></div>
             <p class="pkg-tagline">{{ c.package_1_tagline }}</p>
             <ul>
               <li v-for="feat in pkg1Features" :key="feat">{{ feat }}</li>
             </ul>
             <a href="#contact" class="button button-accent pkg-cta">Talk about {{ c.package_1_name }}</a>
-          </div>
-          <div class="package-card">
-            <p class="pkg-subtitle">{{ c.package_2_subtitle }}</p>
-            <h3>{{ c.package_2_name }}</h3>
-            <p class="pkg-percent">{{ c.package_2_percent }}</p>
-            <p class="pkg-tagline">{{ c.package_2_tagline }}</p>
-            <ul>
-              <li v-for="feat in pkg2Features" :key="feat">{{ feat }}</li>
-            </ul>
-            <a href="#contact" class="button button-dark pkg-cta">Talk about {{ c.package_2_name }}</a>
           </div>
         </div>
       </div>
@@ -376,6 +426,57 @@ h3 { margin: 0 0 8px; font-size: 17px; }
 .footer-logo { height: 28px; object-fit: contain; opacity: .7; }
 .site-footer p { font-size: 12px; color: #555; margin: 0; }
 
+/* HERO STATS ROW */
+.hero-stats-row { display: flex; align-items: center; gap: 28px; margin-top: 36px; flex-wrap: wrap; }
+.hero-stat-item { display: flex; align-items: baseline; gap: 8px; }
+.hero-stat-item strong { font: 700 32px/1 'Arial Narrow', Impact, Arial, sans-serif; color: var(--accent); }
+.hero-stat-item span { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: #bbb; line-height: 1.3; }
+.hero-stat-divider { color: #444; font-size: 20px; font-weight: 300; }
+
+/* MARQUEE BANNER */
+.marquee-banner { background: var(--accent); padding: 20px 32px; display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; position: sticky; top: 76px; z-index: 49; }
+.marquee-banner span { font: 700 clamp(20px, 2.8vw, 34px)/1 'Arial Narrow', Impact, Arial, sans-serif; text-transform: uppercase; letter-spacing: -.01em; color: #fff; white-space: nowrap; }
+.banner-divider { font-weight: 300 !important; font-size: 24px !important; color: rgba(255,255,255,.35) !important; }
+
+/* OUR APPROACH */
+.approach-section { padding: 100px 0; }
+.approach-section h2 { color: var(--ink); }
+.h2-muted { color: #a4a4a4; }
+.approach-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+.approach-card { padding: 36px; border: 1px solid var(--line); border-radius: 2px; background: #fff; }
+.approach-wilson { border-top: 4px solid var(--accent); }
+.approach-solo { background: #f7f7f5; border-top: 4px solid #aaa; }
+.approach-other { background: #efefec; }
+.approach-kicker { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; font-weight: 800; color: var(--accent); margin: 0 0 12px; }
+.approach-solo .approach-kicker, .approach-other .approach-kicker { color: #777; }
+.approach-card h3 { font: 700 28px/1 'Arial Narrow', Impact, Arial, sans-serif; text-transform: uppercase; margin: 0 0 20px; color: var(--ink); }
+.approach-solo h3 { color: #444; }
+.approach-row { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 14px 0; border-top: 1px solid var(--line); }
+.approach-row p { margin: 0; color: #666; font-size: 14px; }
+.approach-row p b { color: #111; }
+.approach-icon { font-weight: 900; font-size: 16px; }
+.approach-icon.accent { color: var(--accent); }
+.approach-icon.muted { color: #999; }
+
+/* PACKAGES (dark) */
+.fees.section-dark { background: var(--black); }
+.fees.section-dark h2 { color: #fff; }
+.fees.section-dark h2 span { color: #a4a4a4; }
+.light-heading p:not(.eyebrow) { color: #aaa; }
+.package-card { border: 1px solid #333; border-radius: 2px; padding: 40px 36px; background: #111; color: #ddd; }
+.package-primary { background: #171717; border-color: #5b151d; box-shadow: inset 0 4px 0 var(--accent); }
+.package-classic { background: #151515; border-top: 4px solid #555; }
+.pkg-subtitle { font-size: 10px; text-transform: uppercase; letter-spacing: .18em; color: #888; margin: 0 0 12px; }
+.package-card h3 { font-family: 'Arial Narrow', Arial, sans-serif; font-size: 40px; text-transform: uppercase; margin: 0 0 16px; color: #fff; }
+.pkg-rate { display: flex; align-items: baseline; gap: 10px; margin: 0 0 8px; }
+.pkg-rate strong { font: 700 64px/.9 'Arial Narrow', Impact, Arial, sans-serif; color: var(--accent); }
+.pkg-rate span { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #888; }
+.pkg-tagline { font-size: 14px; color: #aaa; margin: 16px 0 24px; padding-bottom: 24px; border-bottom: 1px solid #333; min-height: 60px; }
+.package-card ul { list-style: none; padding: 0; margin: 0 0 32px; border-top: 1px solid #333; }
+.package-card ul li { font-size: 14px; padding: 12px 0; border-bottom: 1px solid #333; color: #ccc; }
+.package-card ul li::before { content: '✓ '; color: var(--accent); font-weight: 700; }
+.button-light { background: #fff; color: var(--black); }
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .grid-2col { grid-template-columns: 1fr; }
@@ -383,8 +484,10 @@ h3 { margin: 0 0 8px; font-size: 17px; }
   .packages-grid { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: 1fr; gap: 40px; }
   .service-grid { grid-template-columns: 1fr; }
+  .approach-grid { grid-template-columns: 1fr; }
   .site-nav { display: none; }
   h1 { font-size: clamp(42px, 10vw, 72px); }
-  .hero-stat { display: none; }
+  .hero-stats-row { gap: 16px; }
+  .marquee-banner { gap: 20px; padding: 16px 20px; }
 }
 </style>
